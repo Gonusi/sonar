@@ -9,6 +9,29 @@ function App() {
   const [chirpBuffer, setChirpBuffer] = useState(null);
 
   useEffect(() => {
+    const handleSuccess = function (stream) {
+      const source = audioCtx.createMediaStreamSource(stream);
+      const processor = audioCtx.createScriptProcessor(1024, 1, 1);
+
+      source.connect(processor);
+      processor.connect(audioCtx.destination);
+
+      processor.onaudioprocess = function (e) {
+        // Do something with the data, e.g. convert it to WAV
+        console.log(e.inputBuffer);
+        stream.getTracks().forEach(function (track) {
+          console.log("track stop", track);
+          track.stop();
+        });
+      };
+    };
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then(handleSuccess);
+  }, []);
+
+  useEffect(() => {
     const request = new XMLHttpRequest();
     request.open("GET", "chirp_0050.ogg", true);
     request.responseType = "arraybuffer";
@@ -18,6 +41,7 @@ function App() {
         audioData,
         (buffer) => {
           setChirpBuffer(buffer);
+          console.log("buffer", buffer);
         },
 
         (err) => console.error(`Error with decoding audio data: ${err.err}`)
