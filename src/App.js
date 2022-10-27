@@ -16,7 +16,7 @@ function App() {
   // Load chirp file and put it into buffer
   useEffect(() => {
     const request = new XMLHttpRequest();
-    request.open("GET", "chirp_0050.ogg", true);
+    request.open("GET", "chirp_0001.ogg", true);
     request.responseType = "arraybuffer";
     request.onload = () => {
       const audioData = request.response;
@@ -46,7 +46,7 @@ function App() {
       chirpSource.start(0);
 
       const streamSource = audioCtx.createMediaStreamSource(stream);
-      const processor = audioCtx.createScriptProcessor(1024 * 8, 1, 1);
+      const processor = audioCtx.createScriptProcessor(16384, 1, 1);
 
       streamSource.connect(processor);
       processor.connect(audioCtx.destination);
@@ -74,9 +74,6 @@ function App() {
             index + sampleData.length
           );
           if (slidingWindow.length < sampleData.length) return; // we're out of bounds
-          if (index === 0) {
-            console.log("correlating arrays:", slidingWindow, sampleData);
-          }
           correlations[index] = calculateCorrelation(
             Array.from(slidingWindow),
             Array.from(sampleData)
@@ -104,7 +101,9 @@ function App() {
 
         for (let i = 0; i < correlations.length; i++) {
           const v = correlations[i];
-          const y = v * correlationCanvas.current.height;
+          const y =
+            (v * correlationCanvas.current.height) / 2 +
+            correlationCanvas.current.height / 2;
 
           if (i === 0) {
             correlationCanvasCtx.moveTo(x, y);
@@ -141,7 +140,7 @@ function App() {
 
           setTimeout(() => {
             chirpSource.stop(0);
-          }, 150);
+          }, 100);
         }}
       >
         Play chirp
