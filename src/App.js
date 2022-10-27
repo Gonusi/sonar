@@ -46,7 +46,7 @@ function App() {
       chirpSource.start(0);
 
       const streamSource = audioCtx.createMediaStreamSource(stream);
-      const processor = audioCtx.createScriptProcessor(16384, 1, 1);
+      const processor = audioCtx.createScriptProcessor(16384 / 2, 1, 1);
 
       streamSource.connect(processor);
       processor.connect(audioCtx.destination);
@@ -63,10 +63,6 @@ function App() {
         console.log("recordedData.length", recordedData.length);
         console.log("sampleData.length", sampleData.length);
 
-        // correlate
-        // take chirpBuffer.getChannelData(0)
-        // check each position in data array for correlation
-
         const correlations = [];
         recordedData.forEach((sample, index) => {
           const slidingWindow = recordedData.slice(
@@ -74,10 +70,13 @@ function App() {
             index + sampleData.length
           );
           if (slidingWindow.length < sampleData.length) return; // we're out of bounds
-          correlations[index] = calculateCorrelation(
-            Array.from(slidingWindow),
-            Array.from(sampleData)
-          );
+
+          let results = [];
+          sampleData.forEach((sample, index) => {
+            results.push(sample * slidingWindow[index]);
+          });
+          let resultSum = results.reduce((partialSum, a) => partialSum + a, 0);
+          correlations.push(resultSum);
         });
         console.log("correlations", correlations);
 
