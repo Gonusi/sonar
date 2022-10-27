@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let source;
+let chirpSource;
 
 function App() {
   const [chirpBuffer, setChirpBuffer] = useState(null);
@@ -33,10 +33,17 @@ function App() {
 
     const handleStream = function (stream) {
       console.log("handle stream");
-      const source = audioCtx.createMediaStreamSource(stream);
-      const processor = audioCtx.createScriptProcessor(1024 * 4, 1, 1);
 
-      source.connect(processor);
+      chirpSource = audioCtx.createBufferSource();
+      chirpSource.buffer = chirpBuffer;
+      chirpSource.connect(audioCtx.destination);
+      chirpSource.loop = false;
+      chirpSource.start(0);
+
+      const streamSource = audioCtx.createMediaStreamSource(stream);
+      const processor = audioCtx.createScriptProcessor(1024 * 8, 1, 1);
+
+      streamSource.connect(processor);
       processor.connect(audioCtx.destination);
 
       processor.onaudioprocess = function (e) {
@@ -52,21 +59,11 @@ function App() {
         bufferSource.connect(audioCtx.destination);
         bufferSource.start();
       };
-
-      // stream.getTracks().forEach(function (track) {
-      //   console.log("track stop", track);
-      //   track.stop();
-      // });
     };
 
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: false })
       .then(handleStream);
-
-    source = audioCtx.createBufferSource();
-    source.buffer = chirpBuffer;
-    source.connect(audioCtx.destination);
-    source.loop = false;
   };
 
   return (
@@ -74,9 +71,9 @@ function App() {
       <button
         onClick={() => {
           playChirp();
-          source.start(0);
+
           setTimeout(() => {
-            source.stop(0);
+            chirpSource.stop(0);
           }, 150);
         }}
       >
