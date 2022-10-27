@@ -46,7 +46,7 @@ function App() {
       chirpSource.start(0);
 
       const streamSource = audioCtx.createMediaStreamSource(stream);
-      const processor = audioCtx.createScriptProcessor(16384 / 2, 1, 1);
+      const processor = audioCtx.createScriptProcessor(16384, 1, 1);
 
       streamSource.connect(processor);
       processor.connect(audioCtx.destination);
@@ -101,7 +101,7 @@ function App() {
         for (let i = 0; i < correlations.length; i++) {
           const v = correlations[i];
           const y =
-            (v * correlationCanvas.current.height) / 2 +
+            (v * correlationCanvas.current.height) / 6 +
             correlationCanvas.current.height / 2;
 
           if (i === 0) {
@@ -119,10 +119,10 @@ function App() {
         );
         correlationCanvasCtx.stroke();
 
-        const bufferSource = audioCtx.createBufferSource();
-        bufferSource.buffer = e.inputBuffer;
-        bufferSource.connect(audioCtx.destination);
-        bufferSource.start();
+        // const bufferSource = audioCtx.createBufferSource();
+        // bufferSource.buffer = e.inputBuffer;
+        // bufferSource.connect(audioCtx.destination);
+        // bufferSource.start();
       };
     };
 
