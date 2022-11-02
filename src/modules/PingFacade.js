@@ -1,7 +1,7 @@
 import Ping from "./Ping";
 import AudioPlayer from "./AudioPlayer";
 import AudioRecorder from "./AudioRecorder";
-import AudioBuffer from "./AudioBuffer";
+import AudioConverter from "./AudioConverter";
 
 class PingFacade {
   constructor() {
@@ -16,7 +16,7 @@ class PingFacade {
     await recorder.start();
     await ping.start(100);
     const recordingBlob = await recorder.stop(500);
-    const audioBuffer = await new AudioBuffer(recordingBlob);
+    const audioBuffer = await new AudioConverter(recordingBlob);
 
     player.play(recordingBlob);
   };

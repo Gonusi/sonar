@@ -1,18 +1,23 @@
-import AudioBuffer from "./AudioBuffer";
+import AudioConverter from "./AudioConverter";
 
 class AudioFile {
-  #audioBuffer;
+  #audioConverter;
 
   constructor() {
     this.audioBuffer = null;
     this.arrayBuffer = null;
-    this.#audioBuffer = new AudioBuffer();
+    this.#audioConverter = new AudioConverter();
   }
 
   fetch = async (URL) => {
-    const blob = await fetch(URL);
-    console.log("blob", blob);
-    const { audioBuffer, arrayBuffer } = await this.audioBuffer.fromBlob(blob);
-    console.log("audioBuffer", audioBuffer);
+    const response = await fetch(URL);
+    const blob = await response.blob();
+    const { audioBuffer, arrayBuffer } = await this.#audioConverter.fromBlob(
+      blob
+    );
+    this.audioBuffer = audioBuffer;
+    this.arrayBuffer = arrayBuffer;
   };
 }
+
+export default AudioFile;

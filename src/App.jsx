@@ -17,7 +17,7 @@ const App = () => {
       </div>
       <div>
         <h3>Manual controls</h3>
-        <button onClick={() => ping.play()}>Ping</button>
+        <button onClick={() => ping.start()}>Ping</button>
         <button onClick={() => audioRecorder.start()}>Record</button>
         <button onClick={() => audioRecorder.stop()}>Stop</button>
         <button

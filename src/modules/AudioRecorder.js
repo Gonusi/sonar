@@ -39,7 +39,7 @@ class AudioRecorder {
 
   stop = (delayMS) => {
     return new Promise(async (resolve) => {
-      await this.wait.now(delayMS);
+      await this.#wait.now(delayMS);
       let mimeType = this.mediaRecorder.mimeType;
       this.mediaRecorder.addEventListener("stop", () => {
         let audioBlob = new Blob(this.audioBlobs, { type: mimeType });
