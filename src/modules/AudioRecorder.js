@@ -1,12 +1,15 @@
 // Thank you:
 // - ralzohairi @ https://github.com/ralzohairi/js-audio-recording/blob/master/js/audio-recording.js
 
+import Wait from "./Wait";
+
 class AudioRecorder {
   constructor() {
     this.audioBlobs = [];
     this.mediaRecorder = null;
     this.streamBeingCaptured = null;
     this.lastRecordingBlob = null;
+    this.wait = new Wait();
   }
 
   start = () => {
@@ -32,8 +35,9 @@ class AudioRecorder {
     }
   };
 
-  stop = () => {
-    return new Promise((resolve) => {
+  stop = (delayMS) => {
+    return new Promise(async (resolve) => {
+      await this.wait.now(delayMS);
       let mimeType = this.mediaRecorder.mimeType;
       this.mediaRecorder.addEventListener("stop", () => {
         let audioBlob = new Blob(this.audioBlobs, { type: mimeType });
