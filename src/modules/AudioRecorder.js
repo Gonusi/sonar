@@ -4,12 +4,14 @@
 import Wait from "./Wait";
 
 class AudioRecorder {
+  #wait;
+
   constructor() {
     this.audioBlobs = [];
     this.mediaRecorder = null;
     this.streamBeingCaptured = null;
     this.lastRecordingBlob = null;
-    this.wait = new Wait();
+    this.#wait = new Wait();
   }
 
   start = () => {

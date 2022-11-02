@@ -2,18 +2,16 @@ import Ping from "./Ping";
 import AudioPlayer from "./AudioPlayer";
 import AudioRecorder from "./AudioRecorder";
 import AudioBuffer from "./AudioBuffer";
-import Wait from "./Wait";
 
-class Mediator {
+class PingFacade {
   constructor() {
     this.recorder = new AudioRecorder();
     this.player = new AudioPlayer();
     this.ping = new Ping();
-    this.wait = new Wait();
   }
 
   recordPing = async () => {
-    const { recorder, ping, player, wait } = this;
+    const { recorder, ping, player } = this;
 
     await recorder.start();
     await ping.start(100);
@@ -24,4 +22,4 @@ class Mediator {
   };
 }
 
-export default Mediator;
+export default PingFacade;

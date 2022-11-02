@@ -3,10 +3,12 @@ import Wait from "./Wait";
 const FILE = "chirps/chirp_0001.ogg";
 
 class Ping {
+  #wait;
+
   constructor() {
     this.audio = new Audio(FILE);
     this.duration = this.audio.duration;
-    this.wait = new Wait();
+    this.#wait = new Wait();
   }
 
   start = async (delayMS, onEnded) => {
