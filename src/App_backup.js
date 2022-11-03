@@ -81,6 +81,7 @@ function App() {
         console.log("correlations", correlations);
 
         const correlationCanvasCtx = correlationCanvas.current.getContext("2d");
+
         correlationCanvasCtx.fillStyle = "rgb(200, 200, 200)";
         correlationCanvasCtx.fillRect(
           0,
