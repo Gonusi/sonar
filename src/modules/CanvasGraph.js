@@ -5,21 +5,30 @@ class CanvasGraph {
     this.canvasEl.addEventListener("mousemove", (e) =>
       this.#handleMouseMove(e, this.canvasCtx)
     );
+    this.lastDrawnGraphImageData = null;
   }
 
-  #handleMouseMove(e, canvasCtx) {
-    console.log("e");
+  #eraseMouseArtifacts() {}
 
-    const x = e.clientX - this.offsetLeft;
-    const y = e.clientY - this.offsetTop;
+  #handleMouseMove(e, canvasCtx) {
+    const { x, y } = this.#getMousePosition(e);
+    canvasCtx.putImageData(this.lastDrawnGraphImageData, 0, 0);
 
     canvasCtx.lineWidth = 1;
     canvasCtx.strokeStyle = "rgb(255, 0, 0)";
-    canvasCtx.beginPath();
 
-    canvasCtx.moveTo(x, y);
-    canvasCtx.lineTo(x, 0);
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(x, 0);
+    canvasCtx.lineTo(x, this.canvasEl.height);
     canvasCtx.stroke();
+  }
+
+  #getMousePosition(e) {
+    const rect = this.canvasEl.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
   }
 
   draw(normalizedData) {
@@ -57,6 +66,12 @@ class CanvasGraph {
     }
 
     canvasCtx.stroke();
+    this.lastDrawnGraphImageData = canvasCtx.getImageData(
+      0,
+      0,
+      canvasEl.width,
+      canvasEl.height
+    );
   }
 }
 
