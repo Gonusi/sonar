@@ -6,12 +6,14 @@ class CanvasGraph {
       this.#handleMouseMove(e, this.canvasCtx)
     );
     this.lastDrawnGraphImageData = null;
+    this.mousePos = { x: null, y: null };
   }
 
   #eraseMouseArtifacts() {}
 
   #handleMouseMove(e, canvasCtx) {
     const { x, y } = this.#getMousePosition(e);
+    this.mousePos = { x, y };
     canvasCtx.putImageData(this.lastDrawnGraphImageData, 0, 0);
 
     canvasCtx.lineWidth = 1;

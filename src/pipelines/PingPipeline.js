@@ -1,11 +1,11 @@
-import Ping from "./Ping";
-import AudioPlayer from "./AudioPlayer";
-import AudioRecorder from "./AudioRecorder";
-import AudioConverter from "./AudioConverter";
-import SlidingWindowCorrelation from "./SlidingWindowCorrelation";
-import DistanceBySamples from "./DistanceBySamples";
+import Ping from "../modules/Ping";
+import AudioPlayer from "../modules/AudioPlayer";
+import AudioRecorder from "../modules/AudioRecorder";
+import AudioConverter from "../modules/AudioConverter";
+import SlidingWindowCorrelation from "../modules/SlidingWindowCorrelation";
+import DistanceBySamples from "../modules/DistanceBySamples";
 
-class PingFacade {
+class PingPipeline {
   constructor() {
     this.audioConverter = new AudioConverter();
     this.ping = new Ping();
@@ -16,8 +16,7 @@ class PingFacade {
     this.correlations = [];
   }
 
-  recordPing = async () => {
-    console.log("recording ping...");
+  start = async () => {
     const { recorder, ping, player, audioConverter, slidingWindowCorrelation } =
       this;
 
@@ -27,39 +26,21 @@ class PingFacade {
     await audioConverter.fromBlob(recordedBlob);
     const recordedAudioBuffer = audioConverter.audioBuffer;
     const pingSignalAudioBuffer = ping.audioFile.audioBuffer;
-
     const distanceBySamples = new DistanceBySamples();
-
-    // console.log(
-    //   "recording:",
-    //   recordedAudioBuffer,
-    //   recordedAudioBuffer.length,
-    //   distanceBySamples.getMeters(recordedAudioBuffer.length)
-    // );
-    // console.log(
-    //   "ping",
-    //   pingSignalAudioBuffer,
-    //   pingSignalAudioBuffer.length,
-    //   distanceBySamples.getMeters(pingSignalAudioBuffer.length)
-    // );
 
     if (recordedAudioBuffer.sampleRate !== pingSignalAudioBuffer.sampleRate) {
       alert(
         `Sample rate mismatch between ping (${pingSignalAudioBuffer.sampleRate}) and recording (${recordedAudioBuffer.sampleRate}. Results will not be accurate until I fix this by resampling.)`
       );
     }
-
     const correlations = slidingWindowCorrelation.calculate(
       recordedAudioBuffer.getChannelData(0),
       pingSignalAudioBuffer.getChannelData(0)
     );
     this.correlations = correlations;
-
-    console.log("correlations:", correlations);
-
     player.play(recordedBlob);
     return correlations;
   };
 }
 
-export default PingFacade;
+export default PingPipeline;

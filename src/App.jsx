@@ -1,41 +1,42 @@
 import Ping from "./modules/Ping";
 import AudioRecorder from "./modules/AudioRecorder";
 import AudioPlayer from "./modules/AudioPlayer";
-import PingFacade from "./modules/PingFacade";
+import PingPipeline from "./pipelines/PingPipeline";
 import { useEffect, useRef, useState } from "react";
 import CanvasGraph from "./modules/CanvasGraph";
-import DataManipulator from "./modules/DataManipulator";
-import DistanceBySamples from "./modules/DistanceBySamples";
+import DataPipeline from "./pipelines/DataPipeline";
+
+const pingPipeline = new PingPipeline();
+const dataPipeline = new DataPipeline({ maxDistanceM: 10 });
 
 const ping = new Ping();
 const audioRecorder = new AudioRecorder();
 const audioPlayer = new AudioPlayer();
-const pingFacade = new PingFacade();
-const dataManipulator = new DataManipulator();
-const distanceBySamples = new DistanceBySamples();
 
 const App = () => {
-  const [correlations, setCorrelations] = useState();
   const canvasRef = useRef();
+  const [data, setData] = useState(null);
+  const [canvasGraph, setCanvasGraph] = useState(null);
+  const [threshold, setThreshold] = useState(10);
+  const [canvasX, setCanvasX] = useState(null);
 
   useEffect(() => {
-    if (!correlations || !correlations.length) return;
-    const startingAtPing = dataManipulator.splitAtMax(correlations)[1];
-    const clippedTo10Meters = dataManipulator.splitAtMeters(
-      startingAtPing,
-      20
-    )[0];
-    console.log(
-      "clippedTo20Meters",
-      clippedTo10Meters,
-      "sampleCount:",
-      clippedTo10Meters.length,
-      "meters:",
-      distanceBySamples.getMeters(clippedTo10Meters.length)
-    );
-    const canvasGraph = new CanvasGraph(canvasRef.current);
-    canvasGraph.draw(clippedTo10Meters);
-  }, [correlations]);
+    setData(dataPipeline.setFilters({ threshold }));
+  }, [threshold]);
+
+  useEffect(() => {
+    if (!data) return;
+    const _canvasGraph = new CanvasGraph(canvasRef.current);
+    _canvasGraph.draw(data);
+
+    setCanvasGraph(_canvasGraph);
+  }, [data]);
+
+  const handleCanvasMouseMove = () => {
+    // need to map canvas position to correlation data. 1px will have many datapoints, so only present the largest one
+    const x = canvasGraph?.mousePos?.x;
+    setCanvasX(x);
+  };
 
   return (
     <>
@@ -43,8 +44,9 @@ const App = () => {
         <h3>Automatic controls</h3>
         <button
           onClick={async () => {
-            const corrs = await pingFacade.recordPing();
-            setCorrelations(corrs);
+            const correlations = await pingPipeline.start();
+            const result = dataPipeline.start(correlations);
+            setData(result);
           }}
         >
           Ping and replay
@@ -65,7 +67,24 @@ const App = () => {
       </div>
       <div>
         <h3>Correlation between recorded sample and ping in time:</h3>
-        <canvas width={400} height={600} ref={canvasRef} />
+        <canvas
+          width={600}
+          height={400}
+          ref={canvasRef}
+          onMouseMove={handleCanvasMouseMove}
+        />
+        <input
+          style={{ display: "block", width: "100%" }}
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          onChange={(e) => {
+            setThreshold(e.target.value);
+          }}
+        />
+        <div>X:{canvasX}</div>
+        <div>Threshold: {threshold}</div>
       </div>
     </>
   );
