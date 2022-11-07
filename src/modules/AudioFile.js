@@ -10,8 +10,13 @@ class AudioFile {
   }
 
   fetch = async (URL) => {
-    const response = await fetch(URL);
-    const blob = await response.blob();
+    let blob = null;
+    try {
+      const response = await fetch(URL);
+      blob = await response.blob();
+    } catch (e) {
+      alert("Error while loading audio file for ping");
+    }
     const { audioBuffer, arrayBuffer } = await this.#audioConverter.fromBlob(
       blob
     );

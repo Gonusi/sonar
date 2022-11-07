@@ -4,11 +4,15 @@ import AudioPlayer from "./modules/AudioPlayer";
 import PingFacade from "./modules/PingFacade";
 import { useEffect, useRef, useState } from "react";
 import CanvasGraph from "./modules/CanvasGraph";
+import DataManipulator from "./modules/DataManipulator";
+import DistanceBySamples from "./modules/DistanceBySamples";
 
 const ping = new Ping();
 const audioRecorder = new AudioRecorder();
 const audioPlayer = new AudioPlayer();
 const pingFacade = new PingFacade();
+const dataManipulator = new DataManipulator();
+const distanceBySamples = new DistanceBySamples();
 
 const App = () => {
   const [correlations, setCorrelations] = useState();
@@ -16,8 +20,21 @@ const App = () => {
 
   useEffect(() => {
     if (!correlations || !correlations.length) return;
+    const startingAtPing = dataManipulator.splitAtMax(correlations)[1];
+    const clippedTo10Meters = dataManipulator.splitAtMeters(
+      startingAtPing,
+      20
+    )[0];
+    console.log(
+      "clippedTo20Meters",
+      clippedTo10Meters,
+      "sampleCount:",
+      clippedTo10Meters.length,
+      "meters:",
+      distanceBySamples.getMeters(clippedTo10Meters.length)
+    );
     const canvasGraph = new CanvasGraph(canvasRef.current);
-    canvasGraph.draw(correlations);
+    canvasGraph.draw(clippedTo10Meters);
   }, [correlations]);
 
   return (
@@ -48,7 +65,7 @@ const App = () => {
       </div>
       <div>
         <h3>Correlation between recorded sample and ping in time:</h3>
-        <canvas width={600} height={400} ref={canvasRef} />
+        <canvas width={400} height={600} ref={canvasRef} />
       </div>
     </>
   );

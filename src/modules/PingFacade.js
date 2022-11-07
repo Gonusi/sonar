@@ -3,6 +3,7 @@ import AudioPlayer from "./AudioPlayer";
 import AudioRecorder from "./AudioRecorder";
 import AudioConverter from "./AudioConverter";
 import SlidingWindowCorrelation from "./SlidingWindowCorrelation";
+import DistanceBySamples from "./DistanceBySamples";
 
 class PingFacade {
   constructor() {
@@ -16,15 +17,31 @@ class PingFacade {
   }
 
   recordPing = async () => {
+    console.log("recording ping...");
     const { recorder, ping, player, audioConverter, slidingWindowCorrelation } =
       this;
 
     await recorder.start();
     await ping.start(100);
-    const recordedBlob = await recorder.stop(500);
+    const recordedBlob = await recorder.stop(250);
     await audioConverter.fromBlob(recordedBlob);
     const recordedAudioBuffer = audioConverter.audioBuffer;
     const pingSignalAudioBuffer = ping.audioFile.audioBuffer;
+
+    const distanceBySamples = new DistanceBySamples();
+
+    // console.log(
+    //   "recording:",
+    //   recordedAudioBuffer,
+    //   recordedAudioBuffer.length,
+    //   distanceBySamples.getMeters(recordedAudioBuffer.length)
+    // );
+    // console.log(
+    //   "ping",
+    //   pingSignalAudioBuffer,
+    //   pingSignalAudioBuffer.length,
+    //   distanceBySamples.getMeters(pingSignalAudioBuffer.length)
+    // );
 
     if (recordedAudioBuffer.sampleRate !== pingSignalAudioBuffer.sampleRate) {
       alert(

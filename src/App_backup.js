@@ -156,3 +156,12 @@ function App() {
 }
 
 export default App;
+
+// Working on refactoring budget graph
+// It's an interestig job so it is not finished yet. What I did is I split it up a bit but and think on how to join it again in a nicer way.
+
+// Today
+//
+// I saw rasmus posted a bug about being able to enable forecasting when some settings are missing
+// I'm still not sure exactly what is wrong with the settings. I know that net sales is not available
+// I need to watch the video another few times and read a bit on the epic to remember how it should work maybe
