@@ -26,10 +26,15 @@ const App = () => {
 
   useEffect(() => {
     if (!data) return;
-    const _canvasGraph = new CanvasGraph(canvasRef.current);
-    _canvasGraph.draw(data);
 
-    setCanvasGraph(_canvasGraph);
+    let _canvasGraph = canvasGraph;
+
+    if (!_canvasGraph) {
+      _canvasGraph = new CanvasGraph(canvasRef.current); // HERE :)
+      setCanvasGraph(_canvasGraph);
+    }
+
+    _canvasGraph.draw(data);
   }, [data]);
 
   const handleCanvasMouseMove = () => {

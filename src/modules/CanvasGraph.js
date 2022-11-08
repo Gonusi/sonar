@@ -9,8 +9,6 @@ class CanvasGraph {
     this.mousePos = { x: null, y: null };
   }
 
-  #eraseMouseArtifacts() {}
-
   #handleMouseMove(e, canvasCtx) {
     const { x, y } = this.#getMousePosition(e);
     this.mousePos = { x, y };

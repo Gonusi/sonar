@@ -29,7 +29,6 @@ class DataPipeline {
       this.clipDistance * 2
     )[0];
     this.manipulationResult = beforeMaxDistance;
-    console.log("beforeMaxDistance", beforeMaxDistance);
   }
 
   #filter() {
