@@ -20,7 +20,12 @@ class CanvasGraph {
       tickMarkCount
     );
 
-    const drawCursorPosition = new DrawCursorPosition(canvas, ctx, orientation);
+    const drawCursorPosition = new DrawCursorPosition(
+      canvas,
+      ctx,
+      orientation,
+      tickMarkCount
+    );
     this.canvas.addEventListener("mousemove", (e) => {
       const { x, y } = this.#getMousePosition(e);
       drawCursorPosition.start(x, y, this.lastDrawnGraphImageData);
