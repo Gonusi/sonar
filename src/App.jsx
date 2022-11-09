@@ -1,23 +1,16 @@
-import Ping from "./modules/Ping";
-import AudioRecorder from "./modules/AudioRecorder";
-import AudioPlayer from "./modules/AudioPlayer";
 import PingPipeline from "./pipelines/PingPipeline";
 import { useEffect, useRef, useState } from "react";
-import CanvasGraph from "./modules/CanvasGraph";
+import CanvasGraph from "./modules/CanvasGraph/CanvasGraph";
 import DataPipeline from "./pipelines/DataPipeline";
 
 const pingPipeline = new PingPipeline();
 const dataPipeline = new DataPipeline({ maxDistanceM: 10 });
 
-const ping = new Ping();
-const audioRecorder = new AudioRecorder();
-const audioPlayer = new AudioPlayer();
-
 const App = () => {
   const canvasRef = useRef();
   const [data, setData] = useState(null);
   const [canvasGraph, setCanvasGraph] = useState(null);
-  const [threshold, setThreshold] = useState(10);
+  const [threshold, setThreshold] = useState(0);
   const [canvasX, setCanvasX] = useState(null);
 
   useEffect(() => {
@@ -30,7 +23,7 @@ const App = () => {
     let _canvasGraph = canvasGraph;
 
     if (!_canvasGraph) {
-      _canvasGraph = new CanvasGraph(canvasRef.current); // HERE :)
+      _canvasGraph = new CanvasGraph(canvasRef.current, 10);
       setCanvasGraph(_canvasGraph);
     }
 
@@ -57,24 +50,12 @@ const App = () => {
           Ping and replay
         </button>
       </div>
-      <div>
-        <h3>Manual controls</h3>
-        <button onClick={() => ping.start()}>Ping</button>
-        <button onClick={() => audioRecorder.start()}>Record</button>
-        <button onClick={() => audioRecorder.stop()}>Stop</button>
-        <button
-          onClick={() => {
-            audioPlayer.play(audioRecorder.lastRecordingBlob);
-          }}
-        >
-          Play recording
-        </button>
-      </div>
+
       <div>
         <h3>Correlation between recorded sample and ping in time:</h3>
         <canvas
-          width={600}
-          height={400}
+          width={400}
+          height={700}
           ref={canvasRef}
           onMouseMove={handleCanvasMouseMove}
         />
@@ -84,6 +65,7 @@ const App = () => {
           min={0}
           max={1}
           step={0.01}
+          value={threshold}
           onChange={(e) => {
             setThreshold(e.target.value);
           }}
