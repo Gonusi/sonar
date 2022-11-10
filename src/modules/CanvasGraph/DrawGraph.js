@@ -17,7 +17,7 @@ class DrawGraph {
 
       for (let i = data.length; i > 0; i--) {
         const v = data[i];
-        const x = (v * canvas.width) / 6; // TODO this could be better drawn as original value of v, and the modification done in dataPipeline
+        const x = v; // TODO this could be better drawn as original value of v, and the modification done in dataPipeline
 
         if (i === 0) {
           ctx.moveTo(x, y);

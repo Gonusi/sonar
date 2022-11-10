@@ -2,6 +2,7 @@ import PingPipeline from "./pipelines/PingPipeline";
 import { useEffect, useRef, useState } from "react";
 import CanvasGraph from "./modules/CanvasGraph/CanvasGraph";
 import DataPipeline from "./pipelines/DataPipeline";
+import "./App.css";
 
 const pingPipeline = new PingPipeline();
 const dataPipeline = new DataPipeline({ maxDistanceM: 10 });
@@ -11,11 +12,12 @@ const App = () => {
   const [data, setData] = useState(null);
   const [canvasGraph, setCanvasGraph] = useState(null);
   const [threshold, setThreshold] = useState(0);
-  const [canvasX, setCanvasX] = useState(null);
+  const [enhance, setEnhance] = useState(50);
+  const container = useRef();
 
   useEffect(() => {
-    setData(dataPipeline.setFilters({ threshold }));
-  }, [threshold]);
+    setData(dataPipeline.setFilters({ threshold, enhance }));
+  }, [threshold, enhance]);
 
   useEffect(() => {
     if (!data) return;
@@ -30,50 +32,65 @@ const App = () => {
     _canvasGraph.draw(data);
   }, [data]);
 
-  const handleCanvasMouseMove = () => {
-    // need to map canvas position to correlation data. 1px will have many datapoints, so only present the largest one
-    const x = canvasGraph?.mousePos?.x;
-    setCanvasX(x);
-  };
-
   return (
-    <>
-      <div>
-        <h3>Automatic controls</h3>
-        <button
-          onClick={async () => {
-            const correlations = await pingPipeline.start();
-            const result = dataPipeline.start(correlations);
-            setData(result);
-          }}
-        >
-          Ping and replay
-        </button>
+    <div ref={container} className="container">
+      <canvas
+        width={container?.current?.width || 480}
+        height={window.screen.height - 300}
+        ref={canvasRef}
+      />
+      <div className="controls">
+        <div className="sliders">
+          <div className="slider">
+            <label className="slider__label" htmlFor="threshold_slider">
+              Threshold:
+            </label>
+            <span className="slider__value">{threshold}</span>
+            <input
+              id="threshold_slider"
+              className="slider__input"
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={threshold}
+              onChange={(e) => {
+                setThreshold(e.target.value);
+              }}
+            />
+          </div>
+        </div>
+        <div className="slider">
+          <label className="slider__label" htmlFor="enhance_slider">
+            Enhance:
+          </label>
+          <span className="slider__value">{enhance}</span>
+          <input
+            id="enhance_slider"
+            className="slider__input"
+            type="range"
+            min={1}
+            max={100}
+            step={0.01}
+            value={enhance}
+            onChange={(e) => {
+              setEnhance(e.target.value);
+            }}
+          />
+        </div>
+        <div className="buttons">
+          <button
+            onClick={async () => {
+              const correlations = await pingPipeline.start();
+              const result = dataPipeline.start(correlations);
+              setData(result);
+            }}
+          >
+            MEASURE
+          </button>
+        </div>
       </div>
-
-      <div>
-        <h3>Correlation between recorded sample and ping in time:</h3>
-        <canvas
-          width={400}
-          height={700}
-          ref={canvasRef}
-          onMouseMove={handleCanvasMouseMove}
-        />
-        <input
-          style={{ display: "block", width: "100%" }}
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={threshold}
-          onChange={(e) => {
-            setThreshold(e.target.value);
-          }}
-        />
-        <div>X:{canvasX}</div>
-        <div>Threshold: {threshold}</div>
-      </div>
-    </>
+    </div>
   );
 };
 

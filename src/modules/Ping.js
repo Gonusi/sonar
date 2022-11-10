@@ -1,7 +1,9 @@
 import Wait from "./Wait";
 import AudioFile from "./AudioFile";
 
-const FILE = "chirps/chirp_48000_80samples_square.ogg";
+// TODO make more, make naming consistent, make selection from app possible
+// const FILE = "chirps/chirp_48000_80samples_square.ogg";
+const FILE = "chirps/chirp_0001.ogg";
 
 class Ping {
   #wait;

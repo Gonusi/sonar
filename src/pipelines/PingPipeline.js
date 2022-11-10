@@ -21,7 +21,7 @@ class PingPipeline {
       this;
 
     await recorder.start();
-    await ping.start(100);
+    await ping.start(200);
     const recordedBlob = await recorder.stop(250);
     await audioConverter.fromBlob(recordedBlob);
     const recordedAudioBuffer = audioConverter.audioBuffer;
@@ -30,7 +30,7 @@ class PingPipeline {
 
     if (recordedAudioBuffer.sampleRate !== pingSignalAudioBuffer.sampleRate) {
       alert(
-        `Sample rate mismatch between ping (${pingSignalAudioBuffer.sampleRate}) and recording (${recordedAudioBuffer.sampleRate}. Results will not be accurate until I fix this by resampling.)`
+        `Sample rate mismatch between ping (${pingSignalAudioBuffer.sampleRate}) and recording (${recordedAudioBuffer.sampleRate}. Results will not be accurate until I fix this.)`
       );
     }
     const correlations = slidingWindowCorrelation.calculate(
@@ -38,7 +38,7 @@ class PingPipeline {
       pingSignalAudioBuffer.getChannelData(0)
     );
     this.correlations = correlations;
-    player.play(recordedBlob);
+    // player.play(recordedBlob);
     return correlations;
   };
 }
