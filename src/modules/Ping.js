@@ -1,7 +1,7 @@
 import Wait from "./Wait";
 import AudioFile from "./AudioFile";
 
-const FILE = "chirps/chirp_0001.ogg";
+const FILE = "chirps/chirp_48000_80samples_square.ogg";
 
 class Ping {
   #wait;
