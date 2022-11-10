@@ -9,7 +9,7 @@ class DrawCursorPosition {
 
   start(x, y, resetImageData) {
     const { ctx, canvas, tickMarkCount, orientation, unit } = this;
-    ctx.putImageData(resetImageData, 0, 0);
+    // ctx.putImageData(resetImageData, 0, 0);
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgb(255, 0, 0)";

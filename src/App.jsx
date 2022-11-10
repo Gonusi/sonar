@@ -12,7 +12,7 @@ const App = () => {
   const [data, setData] = useState(null);
   const [canvasGraph, setCanvasGraph] = useState(null);
   const [threshold, setThreshold] = useState(0);
-  const [enhance, setEnhance] = useState(50);
+  const [enhance, setEnhance] = useState(100);
   const container = useRef();
 
   useEffect(() => {
@@ -70,7 +70,7 @@ const App = () => {
             className="slider__input"
             type="range"
             min={1}
-            max={100}
+            max={400}
             step={0.01}
             value={enhance}
             onChange={(e) => {
