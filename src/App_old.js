@@ -9,14 +9,14 @@ let chirpSource;
 // TODO at this point, I'm able to record my own chirp from speakers
 // Try to correlate its channel with chirpBuffer content and display correlation on graph
 
-function App() {
+function App_old() {
   const [chirpBuffer, setChirpBuffer] = useState(null);
   const correlationCanvas = useRef();
 
   // Load chirp file and put it into buffer
   useEffect(() => {
     const request = new XMLHttpRequest();
-    request.open("GET", "chirp_0001.ogg", true);
+    request.open("GET", "chirps/chirp_0001.ogg", true);
     request.responseType = "arraybuffer";
     request.onload = () => {
       const audioData = request.response;
@@ -155,7 +155,7 @@ function App() {
   );
 }
 
-export default App;
+export default App_old;
 
 // Working on refactoring budget graph
 // It's an interestig job so it is not finished yet. What I did is I split it up a bit but and think on how to join it again in a nicer way.

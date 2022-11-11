@@ -36,7 +36,7 @@ const App = () => {
     <div ref={container} className="container">
       <canvas
         width={container?.current?.width || 480}
-        height={window.screen.height - 300}
+        height={window.innerHeight - 300}
         ref={canvasRef}
       />
       <div className="controls">

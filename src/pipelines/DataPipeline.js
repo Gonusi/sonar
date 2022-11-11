@@ -10,7 +10,7 @@ class DataPipeline {
     this.clipDistance = maxDistanceM;
     this.filters = {
       threshold: 0,
-      enhance: 6, // TODO we have duplicate initial values here and in App.jsx
+      enhance: 0,
     };
     this.manipulationResult = null;
     this.filterResult = null;
@@ -33,7 +33,6 @@ class DataPipeline {
   }
 
   #filter() {
-    console.log("filter running with filters:", this.filters);
     const thresholdResult = dataFilter.threshold(
       this.manipulationResult,
       this.filters.threshold
